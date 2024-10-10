@@ -1,0 +1,19 @@
+用户登入
+https://speakeasy.ifi.uzh.ch/panel
+
+Bot API
+https://speakeasy.ifi.uzh.ch/client-swagger#/Chat
+
+项目详细信息
+https://lms.uzh.ch/auth/RepositoryEntry/17583866519/CourseNode/110427568402254
+
+Demo
+https://github.com/lucaro/speakeasy_eliza_example
+
+评估要求
+https://lms.uzh.ch/auth/RepositoryEntry/17583866519/CourseNode/108453300753063
+
+通过setup.py配置环境；
+根据datasets_intro.ipynb接入数据集和查询语句；
+基于demo_bot.py API接入；
+记得看readme介绍和ATAI_SPARQL_Queries介绍。
