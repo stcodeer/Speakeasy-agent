@@ -2,9 +2,58 @@ from speakeasypy import Speakeasy, Chatroom
 from typing import List
 import time
 
+from rdflib.namespace import Namespace, RDF, RDFS, XSD
+from rdflib.term import URIRef, Literal
+import csv
+import json
+import networkx as nx
+import pandas as pd
+import rdflib
+# from collections import defaultdict, Counter
+# import locale
+# _ = locale.setlocale(locale.LC_ALL, '')
+# from _plotly_future_ import v4_subplots
+# from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
+# import plotly.graph_objs as go
+# init_notebook_mode(connected=True)
+# import plotly.io as pio
+# pio.renderers.default = 'jupyterlab+svg'
+
+graph = rdflib.Graph()
+graph.parse('./14_graph.nt', format='turtle')
+
 DEFAULT_HOST_URL = 'https://speakeasy.ifi.uzh.ch'
 listen_freq = 2
 
+username = "stormy-dragon"
+password = "G5ndX2X8"
+
+def to_text(x):
+    x = str(x)
+    if x.isdigit():
+        x = int(x)
+    return x
+
+def adjust_format(ret):
+    multi_ans = False
+
+    for i in range(len(ret)):
+        if len(ret[i]) == 1:
+            ret[i] = to_text(ret[i][0])
+            continue
+        else:
+            multi_ans = True
+            ret[i] = list(ret[i])
+            for j in range(len(ret[i])):
+                ret[i][j] = to_text(ret[i][j])
+            ret[i] = tuple(ret[i])
+            
+    if multi_ans:
+        ret = str(ret).replace("), ", "),\n ")
+    else:
+        ret = str(ret).replace("', ", "',\n ").replace('", ', '",\n ')
+    
+    return ret.replace('–','-')
 
 class Agent:
     def __init__(self, username, password):
@@ -34,7 +83,12 @@ class Agent:
                     # Implement your agent here #
 
                     # Send a message to the corresponding chat room using the post_messages method of the room object.
-                    room.post_messages(f"Received your message: '{message.message}' ")
+                    
+                    ret = list(graph.query(message.message))
+                    
+                    room.post_messages(adjust_format(ret))
+                    # room.post_messages(f"Received your message: '{message.message}' ")
+                    
                     # Mark the message as processed, so it will be filtered out when retrieving new messages.
                     room.mark_as_processed(message)
 
@@ -59,5 +113,5 @@ class Agent:
 
 
 if __name__ == '__main__':
-    demo_bot = Agent("bot_name", "bot_pass")
+    demo_bot = Agent(username, password)
     demo_bot.listen()
