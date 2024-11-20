@@ -1,4 +1,5 @@
 import method
+from recommendation import func_3
 import llama
 import subprocess
 
@@ -87,7 +88,7 @@ class Agent:
                         if "Y" in llama.classify_question(message.message):
                             # Recommendation
                             print("!type:! ", "Recommendation")
-                            ret = xxx.xxx(llama.entitylist_extract(message.message))
+                            ret = func_3(llama.entitylist_extract(message.message))
                         else:
                             # Fatual & Embedding
                             print("!type:! ", "Fatual & Embedding")
