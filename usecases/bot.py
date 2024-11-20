@@ -1,3 +1,7 @@
+import method
+import llama
+import subprocess
+
 from speakeasypy import Speakeasy, Chatroom
 from typing import List
 import time
@@ -6,8 +10,6 @@ from rdflib.namespace import Namespace, RDF, RDFS, XSD
 from rdflib.term import URIRef, Literal
 import csv
 import json
-import networkx as nx
-import pandas as pd
 import rdflib
 # from collections import defaultdict, Counter
 # import locale
@@ -18,9 +20,6 @@ import rdflib
 # init_notebook_mode(connected=True)
 # import plotly.io as pio
 # pio.renderers.default = 'jupyterlab+svg'
-
-graph = rdflib.Graph()
-graph.parse('./14_graph.nt', format='turtle')
 
 DEFAULT_HOST_URL = 'https://speakeasy.ifi.uzh.ch'
 listen_freq = 2
@@ -84,9 +83,21 @@ class Agent:
 
                     # Send a message to the corresponding chat room using the post_messages method of the room object.
                     
-                    ret = list(graph.query(message.message))
-                    
-                    room.post_messages(adjust_format(ret))
+                    try:
+                        if "Y" in llama.classify_question(message.message):
+                            # Recommendation
+                            print("!type:! ", "Recommendation")
+                            ret = xxx.xxx(llama.entitylist_extract(message.message))
+                        else:
+                            # Fatual & Embedding
+                            print("!type:! ", "Fatual & Embedding")
+                            ret = method.template_1(message.message)
+                    except:
+                        ret = "Apologies, but there is no corresponding answer in the database for your question."
+                        
+                    # ret = llama.refine_wording(ret)
+
+                    room.post_messages(ret)
                     # room.post_messages(f"Received your message: '{message.message}' ")
                     
                     # Mark the message as processed, so it will be filtered out when retrieving new messages.
@@ -113,5 +124,11 @@ class Agent:
 
 
 if __name__ == '__main__':
+    command = ["ollama", "serve"]
+    process = subprocess.Popen(command)
+    time.sleep(10)
+    
     demo_bot = Agent(username, password)
     demo_bot.listen()
+    
+    process.terminate()
